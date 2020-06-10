@@ -7,7 +7,7 @@ public class Helper {
     public static Integer parseIntegerWithSuffixString(String input) {
         Pattern p = Pattern.compile("\\d+");
         Matcher m = p.matcher(input);
-        while(m.find()) {
+        if(m.find()) {
             return Integer.parseInt(m.group());
         }
         return 0;

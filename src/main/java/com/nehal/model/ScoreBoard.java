@@ -1,7 +1,10 @@
 package com.nehal.model;
 
 import com.nehal.factory.DeliveryOutputFactory;
+import com.nehal.interfaces.ManageBatsman;
+import com.nehal.interfaces.ManageScoreBoard;
 import com.nehal.model.output.DeliveryOutput;
+import com.nehal.validation.Validation;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,7 +12,7 @@ import java.io.InputStreamReader;
 
 import static com.nehal.constants.Constants.*;
 
-public class ScoreBoard {
+public class ScoreBoard implements ManageScoreBoard {
     private Batsman[] battingOrder;
     private BufferedReader br;
     private Batsman onStrike;
@@ -35,7 +38,7 @@ public class ScoreBoard {
         setUpBattingOrder();
     }
 
-    public void setUpBattingOrder() throws IOException {
+    private void setUpBattingOrder() throws IOException {
         System.out.println("Batting order for " + battingTeam.getName() + ":");
         Integer playersCount = this.battingTeam.getPlayersCount();
         this.battingOrder = new Batsman[playersCount];
@@ -66,9 +69,9 @@ public class ScoreBoard {
         System.out.println("ScoreBoard For Team: " + battingTeam.getName());
         System.out.println("PName Score 4s 6s Balls");
         for(int i=0; i<battingTeam.getPlayersCount(); i++) {
-            Batsman batsman = battingOrder[i];
-            System.out.println(batsman.name + "    " + batsman.getScore() + "  " + batsman.getUnitCount(FOUR)
-                    + "  " + batsman.getUnitCount(SIX) + "  " + batsman.getBalls());
+            ManageBatsman batsman = battingOrder[i];
+            System.out.println(batsman.getName() + "    " + batsman.getScore() + "  " + batsman.getRunUnitVsCount(FOUR)
+                    + "  " + batsman.getRunUnitVsCount(SIX) + "  " + batsman.getBalls());
         }
         System.out.println("Total: "+ battingTeam.getScore() + "/" + battingTeam.getWicketsDown());
         if(this.currDelivery.equals(BALLS_IN_OVER)) {
@@ -80,7 +83,7 @@ public class ScoreBoard {
 
     private void deliverOver() throws IOException {
         for(int ballCount=0; ballCount<BALLS_IN_OVER; ballCount++) {
-            String input =  br.readLine();
+            String input =  this.getDeliveryOutput();
             DeliveryOutput deliveryOutput = DeliveryOutputFactory.getOutput(input);
             switch (deliveryOutput.getOutputType()) {
                 case RUN:
@@ -131,6 +134,15 @@ public class ScoreBoard {
         Batsman p = onStrike;
         onStrike = offStrike;
         offStrike = p;
+    }
+
+    private String getDeliveryOutput() throws IOException {
+        String deliveryOutput = br.readLine();
+        while(!Validation.validateDeliveryOutput(deliveryOutput)) {
+            System.out.println("Invalid Input, Retry!");
+            deliveryOutput = br.readLine();
+        }
+        return deliveryOutput;
     }
 
     private boolean getInningStatus() {

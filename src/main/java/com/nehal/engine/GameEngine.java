@@ -1,5 +1,6 @@
 package com.nehal.engine;
 
+import com.nehal.interfaces.ManageScoreBoard;
 import com.nehal.model.ScoreBoard;
 import com.nehal.model.Team;
 
@@ -13,7 +14,7 @@ public class GameEngine {
     private Team battingTeam;
     private Team bowlingTeam;
     private Integer overs;
-    private ScoreBoard[] innings;
+    private ManageScoreBoard[] innings;
     private BufferedReader br;
     private Integer inningsCount;
 
@@ -29,7 +30,7 @@ public class GameEngine {
     public void start() throws IOException {
         while(inningsCount < TOTAL_INNINGS) {
             this.initializeInning();
-            ScoreBoard currentInning = this.innings[this.inningsCount-1];
+            ManageScoreBoard currentInning = this.innings[this.inningsCount-1];
             currentInning.play();
             this.toggleTeam();
         }
@@ -38,7 +39,8 @@ public class GameEngine {
 
     public void initializeInning() throws IOException {
         this.inningsCount++;
-        this.innings[inningsCount-1] = new ScoreBoard(this.battingTeam, this.bowlingTeam, this.inningsCount, this.overs);
+        this.innings[inningsCount-1] = new ScoreBoard(this.battingTeam, this.bowlingTeam
+                , this.inningsCount, this.overs);
         this.innings[inningsCount-1].setupScoreBoard();
     }
 

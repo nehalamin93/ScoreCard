@@ -2,6 +2,7 @@ package com.nehal.controller;
 
 import com.nehal.engine.GameEngine;
 import com.nehal.model.Team;
+import com.nehal.validation.Validation;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,7 +24,10 @@ public class GameController {
 
         System.out.println("No. of overs: ");
         String overs = br.readLine();
-
+        while(!Validation.validIntegerString(overs)) {
+            System.out.println("Invalid String: Retry");
+            overs = br.readLine();
+        }
         gameEngine = new GameEngine(team1, team2, Integer.parseInt(overs));
         gameEngine.start();
     }

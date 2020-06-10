@@ -1,8 +1,10 @@
 package com.nehal.model;
 
+import com.nehal.interfaces.ManageBatsman;
+
 import java.util.Arrays;
 
-public class Batsman extends Player {
+public class Batsman extends Player implements ManageBatsman {
 
     private Integer score;
     private Integer[] runUnit;
@@ -30,7 +32,7 @@ public class Batsman extends Player {
         return this.balls;
     }
 
-    public Integer getUnitCount(Integer unit) {
+    public Integer getRunUnitVsCount(Integer unit) {
         return this.runUnit[unit];
     }
 }

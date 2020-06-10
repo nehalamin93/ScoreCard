@@ -9,16 +9,16 @@ public class Team {
     public Team(String name, Integer playersCount) {
         this.name = name;
         this.playersCount = playersCount;
-        score = 0;
-        wicketsDown = 0;
+        this.score = 0;
+        this.wicketsDown = 0;
     }
 
     public void updateScore(Integer run) {
-        score += run;
+        this.score += run;
     }
 
     public void updateWicketsDown() {
-        wicketsDown += 1;
+        this.wicketsDown += 1;
     }
 
     public Integer getPlayersCount() {
