@@ -33,6 +33,7 @@ public class ScoreBoard implements ManageScoreBoard {
         this.inningNumber = inningNumber;
         this.gameOver = false;
         this.totalOvers = totalOvers;
+        this.currOver = 0;
     }
 
     public void setupScoreBoard() throws IOException {
@@ -62,7 +63,7 @@ public class ScoreBoard implements ManageScoreBoard {
             }
             System.out.println("ScoreBoard: ");
             displayScoreBoard();
-            if(gameOver) {
+            if(gameOver || !getInningStatus()) {
                 return;
             }
         }
