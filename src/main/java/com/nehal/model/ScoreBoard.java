@@ -1,5 +1,6 @@
 package com.nehal.model;
 
+import com.nehal.constants.BatsmanStatus;
 import com.nehal.factory.DeliveryOutputFactory;
 import com.nehal.interfaces.ManageBatsman;
 import com.nehal.interfaces.ManageScoreBoard;
@@ -47,7 +48,9 @@ public class ScoreBoard implements ManageScoreBoard {
             battingOrder[i] = new Batsman(input);
         }
         this.onStrike = battingOrder[0];
+        this.onStrike.setStatus(BatsmanStatus.BATTING);
         this.offStrike = battingOrder[1];
+        this.offStrike.setStatus(BatsmanStatus.BATTING);
     }
 
     public void play() throws IOException {
@@ -70,8 +73,13 @@ public class ScoreBoard implements ManageScoreBoard {
         System.out.println("PName Score 4s 6s Balls");
         for(int i=0; i<battingTeam.getPlayersCount(); i++) {
             ManageBatsman batsman = battingOrder[i];
-            System.out.println(batsman.getName() + "    " + batsman.getScore() + "  " + batsman.getRunUnitVsCount(FOUR)
-                    + "  " + batsman.getRunUnitVsCount(SIX) + "  " + batsman.getBalls());
+            if(batsman.getStatus().equals(BatsmanStatus.BATTING)) {
+                System.out.println(batsman.getName() + "*   " + batsman.getScore() + "  " + batsman.getRunUnitVsCount(FOUR)
+                        + "  " + batsman.getRunUnitVsCount(SIX) + "  " + batsman.getBalls());
+            } else {
+                System.out.println(batsman.getName() + "    " + batsman.getScore() + "  " + batsman.getRunUnitVsCount(FOUR)
+                        + "  " + batsman.getRunUnitVsCount(SIX) + "  " + batsman.getBalls());
+            }
         }
         System.out.println("Total: "+ battingTeam.getScore() + "/" + battingTeam.getWicketsDown());
         if(this.currDelivery.equals(BALLS_IN_OVER)) {
@@ -110,12 +118,14 @@ public class ScoreBoard implements ManageScoreBoard {
                     break;
                 case WICKET:
                     this.battingTeam.updateWicketsDown();
+                    this.onStrike.setStatus(BatsmanStatus.OUT);
                     this.onStrike.updateScore(deliveryOutput.getScore());
                     this.currDelivery = ballCount+1;
                     if(!getInningStatus()) {
                         return;
                     }
                     this.onStrike = this.battingOrder[this.battingTeam.getWicketsDown()+1];
+                    this.onStrike.setStatus(BatsmanStatus.BATTING);
                     break;
                 default:
                     break;

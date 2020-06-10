@@ -23,7 +23,7 @@ public class DeliveryOutputFactory {
             case WIDE:
                 return new Wide(DEFAULT_WIDE_RUN + run);
             case WICKET:
-                return new Wicket(run);
+                return new Wicket(0);
             case NO_BALL:
                 return new NoBall(DEFAULT_NO_BALL_RUN + run);
             default:
