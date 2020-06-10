@@ -22,7 +22,7 @@ public class GameEngine {
         this.bowlingTeam  = bowlingTeam;
         this.overs = overs;
         this.innings  = new ScoreBoard[TOTAL_INNINGS];
-        this.inningsCount = 1;
+        this.inningsCount = 0;
         this.br = new BufferedReader(new InputStreamReader(System.in));
     }
 
@@ -30,16 +30,16 @@ public class GameEngine {
         while(inningsCount < TOTAL_INNINGS) {
             this.initializeInning();
             ScoreBoard currentInning = this.innings[this.inningsCount-1];
-            currentInning.play(this.overs);
+            currentInning.play();
             this.toggleTeam();
         }
         this.decideWinner();
     }
 
     public void initializeInning() throws IOException {
-        this.innings[inningsCount-1] = new ScoreBoard(this.battingTeam, this.bowlingTeam, inningsCount);
-        this.innings[inningsCount-1].setupScoreBoard();
         this.inningsCount++;
+        this.innings[inningsCount-1] = new ScoreBoard(this.battingTeam, this.bowlingTeam, this.inningsCount, this.overs);
+        this.innings[inningsCount-1].setupScoreBoard();
     }
 
     public void toggleTeam() {

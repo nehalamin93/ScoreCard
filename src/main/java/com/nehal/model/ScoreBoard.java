@@ -18,13 +18,17 @@ public class ScoreBoard {
     private Team bowlingTeam;
     private boolean gameOver;
     private Integer inningNumber;
+    private Integer totalOvers;
+    private Integer currOver;
+    private Integer currDelivery;
 
-    public ScoreBoard(Team battingTeam, Team bowlingTeam, Integer inningNumber) {
+    public ScoreBoard(Team battingTeam, Team bowlingTeam, Integer inningNumber, Integer totalOvers) {
         br = new BufferedReader(new InputStreamReader(System.in));
         this.battingTeam = battingTeam;
         this.bowlingTeam = bowlingTeam;
         this.inningNumber = inningNumber;
         this.gameOver = false;
+        this.totalOvers = totalOvers;
     }
 
     public void setupScoreBoard() throws IOException {
@@ -43,13 +47,15 @@ public class ScoreBoard {
         this.offStrike = battingOrder[1];
     }
 
-    public void play(Integer overs) throws IOException {
-        while(overs>0) {
-            System.out.println("Over: ");
+    public void play() throws IOException {
+        for(int overCount=1; overCount<=this.totalOvers; overCount++){
+            System.out.println("Over " + overCount + ":");
             deliverOver();
+            if(this.currDelivery.equals(BALLS_IN_OVER)) {
+                this.currOver = overCount;
+            }
             System.out.println("ScoreBoard: ");
             displayScoreBoard();
-            overs -= 1;
             if(gameOver) {
                 return;
             }
@@ -64,11 +70,15 @@ public class ScoreBoard {
             System.out.println(batsman.name + "    " + batsman.getScore() + "  " + batsman.getUnitCount(FOUR)
                     + "  " + batsman.getUnitCount(SIX) + "  " + batsman.getBalls());
         }
-        System.out.println("Total: "+ battingTeam.getScore());
-        System.out.println("Over: ");
+        System.out.println("Total: "+ battingTeam.getScore() + "/" + battingTeam.getWicketsDown());
+        if(this.currDelivery.equals(BALLS_IN_OVER)) {
+            System.out.println("Over: " + this.currOver);
+        } else {
+            System.out.println("Over: " + this.currOver + "." + this.currDelivery);
+        }
     }
 
-    private int deliverOver() throws IOException {
+    private void deliverOver() throws IOException {
         for(int ballCount=0; ballCount<BALLS_IN_OVER; ballCount++) {
             String input =  br.readLine();
             DeliveryOutput deliveryOutput = DeliveryOutputFactory.getOutput(input);
@@ -79,6 +89,7 @@ public class ScoreBoard {
                     if(deliveryOutput.getScore()%2 == 1) {
                         togglePlayers();
                     }
+                    this.currDelivery = ballCount+1;
                     break;
                 case NO_BALL:
                     this.battingTeam.updateScore(deliveryOutput.getScore());
@@ -86,17 +97,20 @@ public class ScoreBoard {
                     if(deliveryOutput.getScore()%2 == 1) {
                         togglePlayers();
                     }
+                    this.currDelivery = ballCount;
                     ballCount -= 1;
                     break;
                 case WIDE:
                     this.battingTeam.updateScore(deliveryOutput.getScore());
+                    this.currDelivery = ballCount;
                     ballCount -= 1;
                     break;
                 case WICKET:
                     this.battingTeam.updateWicketsDown();
                     this.onStrike.updateScore(deliveryOutput.getScore());
+                    this.currDelivery = ballCount+1;
                     if(!getInningStatus()) {
-                        return ballCount+1;
+                        return;
                     }
                     this.onStrike = this.battingOrder[this.battingTeam.getWicketsDown()+1];
                     break;
@@ -105,13 +119,12 @@ public class ScoreBoard {
             }
             if(inningNumber == 2 && battingTeam.getScore() > bowlingTeam.getScore()) {
                 this.gameOver = true;
-                break;
+                return;
             }
         }
         if(!this.gameOver) {
             togglePlayers();
         }
-        return BALLS_IN_OVER;
     }
 
     private void togglePlayers() {
