@@ -15,7 +15,7 @@ public class Batsman extends Player implements ManageBatsman {
 
     public Batsman(String name) {
         super(name);
-        this.runUnit = new Integer[7];
+        this.runUnit = new Integer[20];
         this.balls =  0;
         this.score = 0;
         Arrays.fill(runUnit, 0);

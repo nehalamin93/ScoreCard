@@ -15,6 +15,9 @@ public class Helper {
 
     public static String parseStringWithPrefixInt(String input) {
         Integer intPrefix = parseIntegerWithSuffixString(input);
+        if(input.equals("0")) {
+            return "";
+        }
         if(intPrefix > 0) {
             return input.substring(intPrefix.toString().length());
         } else {
